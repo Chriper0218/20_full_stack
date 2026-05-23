@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // ── Small icon components (inline SVG to avoid extra deps) ────────────
@@ -98,6 +98,18 @@ export default function HomePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  
+  // Estado para manejar los delays de animación de forma segura en el cliente
+  const [animationDelays, setAnimationDelays] = useState<string[]>(["0s", "0s", "0s"]);
+
+  useEffect(() => {
+    // Esto se ejecuta únicamente tras el montaje en el navegador
+    setAnimationDelays([
+      `${Math.random() * 1}s`,
+      `${Math.random() * 1}s`,
+      `${Math.random() * 1}s`
+    ]);
+  }, []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -228,11 +240,15 @@ export default function HomePage() {
                   { label: "Laptops", count: "48", color: "#60a5fa" },
                   { label: "Servidores", count: "12", color: "#22d3ee" },
                   { label: "En mantenimiento", count: "3", color: "#f59e0b" },
-                ].map((item) => (
+                ].map((item, index) => (
                   <div
                     key={item.label}
                     className="stat-card animate-float"
-                    style={{ flex: 1, minWidth: 120, animationDelay: `${Math.random() * 1}s` }}
+                    style={{ 
+                      flex: 1, 
+                      minWidth: 120, 
+                      animationDelay: animationDelays[index] 
+                    }}
                   >
                     <div style={{ fontSize: "1.6rem", fontWeight: 700, color: item.color }}>{item.count}</div>
                     <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.15rem" }}>{item.label}</div>

@@ -180,7 +180,7 @@ export default function RegisterPage() {
                 id="reg-name"
                 type="text"
                 className="input-field"
-                placeholder="Juan Pérez"
+                placeholder="Ingresa tu nombre"
                 value={form.name}
                 onChange={e => update("name", e.target.value)}
                 autoComplete="name"
@@ -220,7 +220,7 @@ export default function RegisterPage() {
                 id="reg-company-key"
                 type="text"
                 className="input-field"
-                placeholder="Ej: CUC-2026"
+                placeholder="Llave en README"
                 value={form.companyKey}
                 onChange={e => update("companyKey", e.target.value.toUpperCase())}
                 autoComplete="off"
@@ -249,7 +249,7 @@ export default function RegisterPage() {
                   id="reg-password"
                   type={showPassword ? "text" : "password"}
                   className="input-field"
-                  placeholder="Mínimo 8 caracteres"
+                  placeholder="Ingresa una contraseña"
                   value={form.password}
                   onChange={e => update("password", e.target.value)}
                   autoComplete="new-password"
