@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-// ── Small icon components (inline SVG to avoid extra deps) ────────────
 function IconServer() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -240,15 +239,11 @@ export default function HomePage() {
                   { label: "Laptops", count: "48", color: "#60a5fa" },
                   { label: "Servidores", count: "12", color: "#22d3ee" },
                   { label: "En mantenimiento", count: "3", color: "#f59e0b" },
-                ].map((item, index) => (
+                ].map((item) => (
                   <div
                     key={item.label}
                     className="stat-card animate-float"
-                    style={{ 
-                      flex: 1, 
-                      minWidth: 120, 
-                      animationDelay: animationDelays[index] 
-                    }}
+                    style={{ flex: 1, minWidth: 120, animationDelay: `${Math.random() * 1}s` }}
                   >
                     <div style={{ fontSize: "1.6rem", fontWeight: 700, color: item.color }}>{item.count}</div>
                     <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.15rem" }}>{item.label}</div>
