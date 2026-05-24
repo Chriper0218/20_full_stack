@@ -41,6 +41,7 @@ export default function InventoryPage() {
       .catch(() => setLoading(false));
   }, [page, search, catFilter, statFilter]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchAssets(); }, [fetchAssets]);
   useEffect(() => { fetch("/api/users").then(r=>r.json()).then(d=>setUsers(d.users||[])).catch(()=>{}); }, []);
 

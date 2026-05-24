@@ -104,6 +104,7 @@ export default function HomePage() {
 
   useEffect(() => {
     // Esto se ejecuta únicamente tras el montaje en el navegador
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAnimationDelays([
       `${Math.random() * 1}s`,
       `${Math.random() * 1}s`,
