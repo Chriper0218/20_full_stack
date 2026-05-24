@@ -180,7 +180,7 @@ export default function RegisterPage() {
                 id="reg-name"
                 type="text"
                 className="input-field"
-                placeholder="Juan Pérez"
+                placeholder="Ingresa tu nombre"
                 value={form.name}
                 onChange={e => update("name", e.target.value)}
                 autoComplete="name"

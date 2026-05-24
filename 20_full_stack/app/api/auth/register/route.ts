@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; //
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
@@ -14,6 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
+    
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -25,17 +26,21 @@ export async function POST(request: Request) {
       );
     }
 
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    
     const newUser = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        name: name || email.split("@")[0], 
-        role: "USER", 
+        name: name || email.split("@")[0],
+        role: "EMPLOYEE", 
+        companyKey: organizationKey || "DEFAULT_KEY", 
       },
     });
 
+    // 5. Responder con éxito
     return NextResponse.json(
       { message: "Usuario registrado con éxito.", userId: newUser.id },
       { status: 201 }
