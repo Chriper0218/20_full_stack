@@ -15,6 +15,7 @@ async function main() {
         create: {
             name: 'Administrador de IT',
             email: 'admin@tuempresa.com',
+            passwordHash: '$2a$10$MvN35PkWp79R7O4A4bC7Oux/7W0D5L1bYhWbVvU8X7b8xJvCg1Vvy', // password is admin123
             companyKey: 'CUC-2026', // Tu llave de organización
             role: 'ADMIN',
         },
@@ -22,6 +23,7 @@ async function main() {
 
     // 2. Crear algunos Activos de prueba
     await prisma.asset.createMany({
+        skipDuplicates: true,
         data: [
             {
                 serialNumber: 'LAP-001',

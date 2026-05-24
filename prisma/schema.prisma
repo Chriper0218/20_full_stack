@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../20_full_stack/node_modules/.prisma/client"
 }
 
 datasource db {
@@ -15,6 +16,7 @@ model Asset {
   category        AssetCategory
   status          AssetStatus    @default(BODEGA)
   purchaseDate    DateTime?
+  warrantyExpiry  DateTime?
   specifications  Json?          // detalles tecnicos solamente
   
   // Relaciones
@@ -31,6 +33,7 @@ model User {
   id            String    @id @default(uuid())
   name          String
   email         String    @unique
+  passwordHash  String
   companyKey    String    // llave, la voy a poner en el readme
   role          Role      @default(EMPLOYEE)
   assets        Asset[]
@@ -45,6 +48,7 @@ model Maintenance {
   description     String
   maintenanceDate DateTime          @default(now())
   cost            Decimal?          @db.Decimal(10, 2)
+  performedBy     String?
   
   // relacion con el activo
   asset           Asset             @relation(fields: [assetId], references: [id], onDelete: Restrict)

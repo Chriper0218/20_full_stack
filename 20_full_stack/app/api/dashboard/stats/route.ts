@@ -60,13 +60,13 @@ export async function GET() {
 
   // Formatear por estado
   const statusMap: Record<string, number> = {};
-  assetsByStatus.forEach((s: any) => {
+  assetsByStatus.forEach((s: { status: string; _count: { status: number } }) => {
     statusMap[s.status] = s._count.status;
   });
 
   // Formatear por categoría
   const categoryMap: Record<string, number> = {};
-  assetsByCategory.forEach((c: any) => {
+  assetsByCategory.forEach((c: { category: string; _count: { category: number } }) => {
     categoryMap[c.category] = c._count.category;
   });
 
