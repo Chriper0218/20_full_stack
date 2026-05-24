@@ -40,7 +40,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // 5. Responder con éxito
     return NextResponse.json(
       { message: "Usuario registrado con éxito.", userId: newUser.id },
       { status: 201 }

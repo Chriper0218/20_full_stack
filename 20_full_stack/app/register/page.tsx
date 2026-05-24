@@ -30,9 +30,9 @@ function IconCheck() {
 function getPasswordStrength(pw: string): { score: number; label: string; color: string } {
   if (pw.length === 0) return { score: 0, label: "", color: "#374151" };
   let score = 0;
-  if (pw.length >= 8)            score++;
-  if (/[A-Z]/.test(pw))         score++;
-  if (/[0-9]/.test(pw))         score++;
+  if (pw.length >= 8)             score++;
+  if (/[A-Z]/.test(pw))          score++;
+  if (/[0-9]/.test(pw))          score++;
   if (/[^A-Za-z0-9]/.test(pw))  score++;
   const map = [
     { label: "Muy débil",  color: "#ef4444" },
@@ -50,6 +50,7 @@ export default function RegisterPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [globalError, setGlobalError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -65,6 +66,7 @@ export default function RegisterPage() {
   function update(field: string, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
     setErrors((e) => ({ ...e, [field]: "" }));
+    setGlobalError("");
   }
 
   function validate() {
@@ -81,14 +83,38 @@ export default function RegisterPage() {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    
     setIsLoading(true);
-    // TODO: conectar con API de registro
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsLoading(false);
-    setSuccess(true);
+    setGlobalError("");
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+          name: form.name,
+          organizationKey: form.companyKey,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Ocurrió un error inesperado.");
+      }
+
+      setSuccess(true);
+    } catch (err: any) {
+      setGlobalError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  // ── Success screen ─────────────────────────────────────────────────
   if (success) {
     return (
       <div className="bg-mesh min-h-screen flex items-center justify-center px-6">
@@ -121,7 +147,6 @@ export default function RegisterPage() {
     );
   }
 
-  // ── Register form ──────────────────────────────────────────────────
   return (
     <div className="bg-mesh min-h-screen flex items-center justify-center px-6 py-12">
       <div style={{ width: "100%", maxWidth: "480px" }}>
@@ -155,7 +180,7 @@ export default function RegisterPage() {
               Asset<span style={{ color: "#60a5fa" }}>IQ</span>
             </span>
           </div>
-        </div>
+        </div> {/* 👈 Aquí cerramos correctamente el contenedor del header superior */}
 
         {/* Card */}
         <div className="glass-card animate-fade-in-up" style={{ borderRadius: "1.5rem", padding: "2.5rem" }}>
@@ -169,6 +194,13 @@ export default function RegisterPage() {
               Regístrate con la llave de tu organización
             </p>
           </div>
+
+          {/* Error global del servidor */}
+          {globalError && (
+            <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", padding: "0.75rem 1rem", borderRadius: "0.75rem", marginBottom: "1.2rem" }}>
+              <p style={{ color: "#fca5a5", fontSize: "0.85rem", textAlign: "center", fontWeight: 500 }}>{globalError}</p>
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
@@ -205,7 +237,7 @@ export default function RegisterPage() {
               {errors.email && <p style={{ color: "#fca5a5", fontSize: "0.78rem", marginTop: "0.3rem" }}>{errors.email}</p>}
             </div>
 
-            {/* Company Key – campo especial */}
+            {/* Company Key */}
             <div>
               <label htmlFor="reg-company-key" className="form-label">
                 Compañía Llave
