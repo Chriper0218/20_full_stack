@@ -15,6 +15,7 @@ model Asset {
   category       AssetCategory
   status         AssetStatus   @default(BODEGA)
   purchaseDate   DateTime?
+  warrantyExpiry DateTime?
   specifications Json?
   userId         String?
   createdAt      DateTime      @default(now())
@@ -24,14 +25,14 @@ model Asset {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  name       String
-  email      String   @unique
-  companyKey String
-  role       Role     @default(EMPLOYEE)
-  createdAt  DateTime @default(now())
-  password   String
-  assets     Asset[]
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  companyKey  String
+  role        Role     @default(EMPLOYEE)
+  createdAt   DateTime @default(now())
+  passwordHash String
+  assets      Asset[]
 }
 
 model Maintenance {
@@ -40,6 +41,7 @@ model Maintenance {
   description     String
   maintenanceDate DateTime        @default(now())
   cost            Decimal?        @db.Decimal(10, 2)
+  performedBy     String?
   assetId         String
   createdAt       DateTime        @default(now())
   asset           Asset           @relation(fields: [assetId], references: [id])

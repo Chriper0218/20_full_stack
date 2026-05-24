@@ -53,13 +53,13 @@ export async function POST(request: Request) {
     }
 
     const bcrypt = (await import("bcryptjs")).default;
-    const passwordHash = await bcrypt.hash(password || "changeme123", 12);
+    const hashedPassword = await bcrypt.hash(password || "changeme123", 12);
 
     const user = await prisma.user.create({
       data: {
         name,
         email,
-        passwordHash,
+        passwordHash: hashedPassword,
         role: role || "EMPLOYEE",
         companyKey: companyKey || process.env.COMPANY_KEY || "CUC-2026",
       },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 function IconServer() {
@@ -92,6 +93,7 @@ const stats = [
 
 // ═══════════════════════════════════════════════════════════════════════
 export default function HomePage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -119,10 +121,25 @@ export default function HomePage() {
       return;
     }
     setIsLoading(true);
-    // TODO: conectar con API de autenticación
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsLoading(false);
-    setError("Funcionalidad de autenticación próximamente.");
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || "Credenciales inválidas.");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setError(err?.message || "Error de conexión. Intenta nuevamente.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -235,19 +252,18 @@ export default function HomePage() {
               </div>
 
               {/* Floating device mockup cards */}
-              <div className="animate-fade-in-up delay-400 hidden lg:flex gap-3 flex-wrap">
+              <div className="stat-grid animate-fade-in-up delay-400 hidden lg:flex gap-3 flex-wrap">
                 {[
                   { label: "Laptops", count: "48", color: "#60a5fa" },
                   { label: "Servidores", count: "12", color: "#22d3ee" },
                   { label: "En mantenimiento", count: "3", color: "#f59e0b" },
-                ].map((item) => (
+                ].map((item, index) => (
                   <div
                     key={item.label}
-                    className="stat-card animate-float"
-                    style={{ flex: 1, minWidth: 120, animationDelay: `${Math.random() * 1}s` }}
+                    className={`stat-card animate-float stat-card-${index + 1}`}
                   >
-                    <div style={{ fontSize: "1.6rem", fontWeight: 700, color: item.color }}>{item.count}</div>
-                    <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.15rem" }}>{item.label}</div>
+                    <div className="stat-card-value" style={{ color: item.color }}>{item.count}</div>
+                    <div className="stat-card-label">{item.label}</div>
                   </div>
                 ))}
               </div>

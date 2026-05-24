@@ -187,18 +187,40 @@ body {
 }
 
 /* ─── Stat card ──────────────────────────────────────────────────────── */
+.stat-grid {
+  width: 100%;
+}
+
 .stat-card {
   background: rgba(13, 27, 62, 0.7);
   border: 1px solid var(--glass-border);
   border-radius: 0.875rem;
   padding: 1.25rem;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  flex: 1;
+  min-width: 120px;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
   border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(13, 27, 62, 0.85);
 }
+
+.stat-card-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.stat-card-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.15rem;
+}
+
+.stat-card-1 { animation-delay: 0.25s; }
+.stat-card-2 { animation-delay: 0.5s; }
+.stat-card-3 { animation-delay: 0.75s; }
 
 /* ─── Badge ──────────────────────────────────────────────────────────── */
 .badge {

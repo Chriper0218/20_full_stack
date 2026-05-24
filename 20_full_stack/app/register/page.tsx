@@ -97,7 +97,7 @@ export default function RegisterPage() {
           email: form.email,
           password: form.password,
           name: form.name,
-          organizationKey: form.companyKey,
+          companyKey: form.companyKey,
         }),
       });
 
