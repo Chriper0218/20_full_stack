@@ -1,63 +1,52 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../20_full_stack/node_modules/.prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-// Catalogo de activos
 model Asset {
-  id              String         @id @default(uuid())
-  serialNumber    String         @unique
-  brand           String
-  model           String
-  category        AssetCategory
-  status          AssetStatus    @default(BODEGA)
-  purchaseDate    DateTime?
-  warrantyExpiry  DateTime?
-  specifications  Json?          // detalles tecnicos solamente
-  
-  // Relaciones
-  assignedTo      User?          @relation(fields: [userId], references: [id])
-  userId          String?
-  maintenances    Maintenance[]
-  
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id             String        @id @default(uuid())
+  serialNumber   String        @unique
+  brand          String
+  model          String
+  category       AssetCategory
+  status         AssetStatus   @default(BODEGA)
+  purchaseDate   DateTime?
+  warrantyExpiry DateTime?
+  specifications Json?
+  userId         String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  assignedTo     User?         @relation(fields: [userId], references: [id])
+  maintenances   Maintenance[]
 }
 
-// Usuarios y responsables
 model User {
-  id            String    @id @default(uuid())
-  name          String
-  email         String    @unique
-  passwordHash  String
-  companyKey    String    // llave, la voy a poner en el readme
-  role          Role      @default(EMPLOYEE)
-  assets        Asset[]
-  
-  createdAt     DateTime  @default(now())
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  companyKey  String
+  role        Role     @default(EMPLOYEE)
+  createdAt   DateTime @default(now())
+  passwordHash String
+  assets      Asset[]
 }
 
-// bitacora para mantenimientos
 model Maintenance {
-  id              String            @id @default(uuid())
+  id              String          @id @default(uuid())
   type            MaintenanceType
   description     String
-  maintenanceDate DateTime          @default(now())
-  cost            Decimal?          @db.Decimal(10, 2)
+  maintenanceDate DateTime        @default(now())
+  cost            Decimal?        @db.Decimal(10, 2)
   performedBy     String?
-  
-  // relacion con el activo
-  asset           Asset             @relation(fields: [assetId], references: [id], onDelete: Restrict)
   assetId         String
-
-  createdAt       DateTime          @default(now())
+  createdAt       DateTime        @default(now())
+  asset           Asset           @relation(fields: [assetId], references: [id])
 }
 
-// Enums para estandarizar estados
 enum AssetStatus {
   ASIGNADO
   MANTENIMIENTO

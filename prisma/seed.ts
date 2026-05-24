@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
@@ -9,13 +10,14 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
     // 1. Crear un Usuario Admin (con tu lógica de Compañía Llave)
+    const adminPassword = await bcrypt.hash('changeme123', 12);
     const admin = await prisma.user.upsert({
         where: { email: 'admin@tuempresa.com' },
         update: {},
         create: {
             name: 'Administrador de IT',
             email: 'admin@tuempresa.com',
-            passwordHash: '$2a$10$MvN35PkWp79R7O4A4bC7Oux/7W0D5L1bYhWbVvU8X7b8xJvCg1Vvy', // password is admin123
+            passwordHash: adminPassword,
             companyKey: 'CUC-2026', // Tu llave de organización
             role: 'ADMIN',
         },
@@ -23,7 +25,6 @@ async function main() {
 
     // 2. Crear algunos Activos de prueba
     await prisma.asset.createMany({
-        skipDuplicates: true,
         data: [
             {
                 serialNumber: 'LAP-001',
