@@ -283,7 +283,36 @@ body {
 ::-webkit-scrollbar-track { background: var(--brand-900); }
 ::-webkit-scrollbar-thumb { background: var(--brand-600); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--brand-500); }
+.hide-mobile {
+  display: table-cell;
+}
 
+.mobile-menu-btn {
+  display: none;
+}
+
+.mobile-sidebar {
+  display: none;
+}
+
+.desktop-sidebar {
+  display: flex;
+}
+
+@media (max-width: 1080px) {
+  .hide-mobile {
+    display: none;
+  }
+  .mobile-menu-btn {
+    display: inline-flex;
+  }
+  .desktop-sidebar {
+    display: none;
+  }
+  .mobile-sidebar {
+    display: flex;
+  }
+}
 /* ─── Selection ──────────────────────────────────────────────────────── */
 ::selection {
   background: rgba(37, 99, 235, 0.35);

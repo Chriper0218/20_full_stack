@@ -3,10 +3,19 @@ import { useEffect, useState, useCallback } from "react";
 import StatusBadge from "../components/StatusBadge";
 import Modal from "../components/Modal";
 
+interface MaintenanceHistoryItem {
+  id: string;
+  type: string;
+  description: string;
+  maintenanceDate: string;
+  cost: string | null;
+}
+
 interface Asset {
   id: string; serialNumber: string; brand: string; model: string;
   category: string; status: string; purchaseDate: string | null; warrantyExpiry: string | null;
   assignedTo: { id: string; name: string; email: string } | null;
+  maintenances?: MaintenanceHistoryItem[];
 }
 
 const catOpts = ["","LAPTOP","CELLPHONE","NETWORK_DEVICE","PRINTER","SERVER"];
@@ -87,7 +96,28 @@ export default function InventoryPage() {
   const [maintForm, setMaintForm] = useState({ type:"PREVENTIVO",description:"",cost:"",performedBy:"" });
   const [maintSaving, setMaintSaving] = useState(false);
 
+  const [historyModal, setHistoryModal] = useState(false);
+  const [historyAsset, setHistoryAsset] = useState<Asset | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
   function openMaint(a: Asset) { setMaintAsset(a); setMaintForm({ type:"PREVENTIVO",description:"",cost:"",performedBy:"" }); setMaintModal(true); }
+  async function openHistory(a: Asset) {
+    setHistoryAsset(a);
+    setHistoryLoading(true);
+    setHistoryModal(true);
+
+    try {
+      const response = await fetch(`/api/assets/${a.id}`);
+      const data = await response.json();
+      if (response.ok && data.asset) {
+        setHistoryAsset(data.asset);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }
 
   async function saveMaint() {
     if (!maintAsset) return;
@@ -158,6 +188,9 @@ export default function InventoryPage() {
                       <button onClick={()=>openMaint(a)} title="Mantenimiento" style={{ background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.2)",borderRadius:"0.4rem",padding:"0.35rem",cursor:"pointer",color:"#fbbf24",transition:"all 0.15s" }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                       </button>
+                      <button onClick={()=>openHistory(a)} title="Ver historial" style={{ background:"rgba(37,99,235,0.1)",border:"1px solid rgba(37,99,235,0.2)",borderRadius:"0.4rem",padding:"0.35rem",cursor:"pointer",color:"#60a5fa",transition:"all 0.15s" }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      </button>
                       <button onClick={()=>handleDelete(a.id)} title="Eliminar" style={{ background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:"0.4rem",padding:"0.35rem",cursor:"pointer",color:"#fca5a5",transition:"all 0.15s" }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                       </button>
@@ -211,6 +244,38 @@ export default function InventoryPage() {
           </div>
           <button onClick={saveMaint} disabled={maintSaving} className="btn-primary" style={{ marginTop:"0.5rem",opacity:maintSaving?0.7:1 }}>{maintSaving?"Registrando...":"Registrar mantenimiento"}</button>
         </div>
+      </Modal>
+
+      <Modal isOpen={historyModal} onClose={()=>setHistoryModal(false)} title={historyLoading ? "Cargando historial..." : `Historial — ${historyAsset?.serialNumber || ""}`} size="md">
+        {historyLoading ? (
+          <p style={{ color: "#6b7280", textAlign: "center" }}>Recuperando información del activo...</p>
+        ) : (
+          <div style={{ display: "grid", gap: "1rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+              <div><p style={{ color: "#6b7280", fontSize: "0.8rem", marginBottom: "0.35rem" }}>Activo</p><p style={{ color: "#f0f4ff", fontWeight: 600 }}>{historyAsset?.brand} {historyAsset?.model}</p></div>
+              <div><p style={{ color: "#6b7280", fontSize: "0.8rem", marginBottom: "0.35rem" }}>Responsable</p><p style={{ color: "#f0f4ff", fontWeight: 600 }}>{historyAsset?.assignedTo?.name || "Sin asignar"}</p></div>
+            </div>
+            <div style={{ background: "rgba(15, 36, 96, 0.55)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: "0.85rem", padding: "1rem" }}>
+              <h4 style={{ marginBottom: "0.8rem", color: "#f0f4ff", fontWeight: 700 }}>Mantenimientos recientes</h4>
+              {historyAsset?.maintenances?.length ? (
+                <div style={{ display: "grid", gap: "0.75rem" }}>
+                  {historyAsset?.maintenances?.map((item) => (
+                    <div key={item.id} style={{ padding: "0.85rem", background: "rgba(13,27,62,0.85)", borderRadius: "0.75rem", border: "1px solid rgba(59,130,246,0.12)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "center", marginBottom: "0.55rem" }}>
+                        <span style={{ color: "#f0f4ff", fontWeight: 600 }}>{new Date(item.maintenanceDate).toLocaleDateString("es-CO")}</span>
+                        <StatusBadge status={item.type} />
+                      </div>
+                      <p style={{ color: "#9ca3af", fontSize: "0.85rem", marginBottom: "0.45rem" }}>{item.description}</p>
+                      <p style={{ color: "#f0f4ff", fontSize: "0.83rem" }}>Costo: {item.cost ? `$${parseFloat(item.cost).toLocaleString()}` : "—"}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ color: "#6b7280" }}>No hay mantenimientos registrados para este activo.</p>
+              )}
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
