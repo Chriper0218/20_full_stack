@@ -197,10 +197,10 @@ export default function HomePage() {
       {/* ─── Hero + Login section ───────────────────────────────────── */}
       <section className="min-h-screen flex items-center pt-20">
         <div className="max-w-7xl mx-auto px-6 py-16 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="hero-grid">
 
             {/* LEFT – Hero content */}
-            <div>
+            <div className="hero-left">
               {/* Badge */}
               <div className="badge badge-blue animate-fade-in-up mb-6" style={{ display: "inline-flex" }}>
                 <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#60a5fa", animation: "pulse-glow 2s infinite" }}/>
@@ -270,7 +270,7 @@ export default function HomePage() {
             </div>
 
             {/* RIGHT – Login card */}
-            <div id="login" className="animate-fade-in-up delay-200">
+            <div id="login" className="hero-right animate-fade-in-up delay-200">
               <div
                 className="glass-card animate-pulse-glow"
                 style={{ borderRadius: "1.5rem", padding: "2.5rem", maxWidth: "440px", margin: "0 auto" }}
