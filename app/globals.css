@@ -160,19 +160,25 @@ body {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Make left column fluid and keep the right column compact for the login card */
+  grid-template-columns: minmax(0, 1fr) 420px;
   align-items: center;
-  gap: 2.5rem;
+  justify-items: center;
+  gap: 3rem;
+  width: 100%;
 }
 
 .hero-left {
-  max-width: 680px;
+  max-width: 720px;
+  padding-right: 1rem;
+  justify-self: start;
 }
 
 .hero-right {
   width: 100%;
   display: flex;
   justify-content: center;
+  justify-self: center;
 }
 
 section[role="main"] {
