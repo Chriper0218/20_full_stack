@@ -158,6 +158,27 @@ body {
   color: var(--brand-200);
 }
 
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.hero-left {
+  max-width: 680px;
+}
+
+.hero-right {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+section[role="main"] {
+  min-height: calc(100vh - 80px);
+}
+
 /* ─── Label ──────────────────────────────────────────────────────────── */
 .form-label {
   display: block;
@@ -311,6 +332,36 @@ body {
   }
   .mobile-sidebar {
     display: flex;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .hero-left,
+  .hero-right {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-right {
+    padding-top: 1rem;
+  }
+  .hero-left {
+    text-align: center;
+  }
+  .hero-left h1 {
+    font-size: clamp(2rem, 7vw, 2.8rem);
+  }
+  .hero-left p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-left .stat-grid {
+    justify-content: center;
   }
 }
 /* ─── Selection ──────────────────────────────────────────────────────── */
